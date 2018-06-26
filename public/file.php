@@ -45,7 +45,7 @@ $toMailId = ""; //yourmailid@mail.com
 $default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
-$root_path = '/var/www/phalcon/asterisk';
+$root_path = '/var/www/phalcon/';
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root

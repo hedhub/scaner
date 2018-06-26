@@ -10,20 +10,20 @@ services:
       - ./logs:/var/log/phalcon
     tty: true
 
-  postgres:
-      restart: always
-      build: containers/postgres
-      container_name: phalcon.compose.asterisk.postgres
-      working_dir: /var/www/phalcon
-      ports:
-        - "5437:5432"
-      volumes:
-        - .:/var/www/phalcon
-        - postgres:/var/lib/postgresql/data
-        - ./conf/postgres/log:/var/log/postgresql
-      environment:
-        POSTGRES_PASSWORD: ''
-        PGDATA: /var/lib/postgresql/data/pgdata
+#  postgres:
+#      restart: always
+#      build: containers/postgres
+#      container_name: phalcon.compose.asterisk.postgres
+#      working_dir: /var/www/phalcon
+#      ports:
+#        - "5437:5432"
+#      volumes:
+#        - .:/var/www/phalcon
+#        - postgres:/var/lib/postgresql/data
+#        - ./conf/postgres/log:/var/log/postgresql
+#      environment:
+#        POSTGRES_PASSWORD: ''
+#        PGDATA: /var/lib/postgresql/data/pgdata
 
   php:
     build: containers/php
@@ -43,15 +43,15 @@ services:
    #
     tty: true
 
-  redis:
-    restart: always
-    image: redis:latest
-    container_name: phalcon.compose.asterisk.redis
-    ports:
-      - "6379"
-    volumes:
-      - redis:/data
-
+#  redis:
+#    restart: always
+#    image: redis:latest
+#    container_name: phalcon.compose.asterisk.redis
+#    ports:
+#      - "6379"
+#    volumes:
+#     - redis:/data
+#
   nginx:
     restart: always
     build: containers/nginx
@@ -75,16 +75,16 @@ services:
       APPLICATION_ENV: development
     tty: true
 
-  asterisk:
-    build: containers/asterisk
-    restart: always
-    container_name: phalcon.compose.asterisk.asterisk
-    volumes:
-       - ./asterisk/dynamic:/var/spool/asterisk
-       - ./asterisk/config:/etc/asterisk
-    volumes_from:
-        - application
-    tty: true
+#  asterisk:
+#    build: containers/asterisk
+#    restart: always
+#    container_name: phalcon.compose.asterisk.asterisk
+#    volumes:
+#       - ./asterisk/dynamic:/var/spool/asterisk
+#       - ./asterisk/config:/etc/asterisk
+#    volumes_from:
+#        - application
+#    tty: true
 
 volumes:
   postgres:
