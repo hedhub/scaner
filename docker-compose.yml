@@ -1,0 +1,93 @@
+version: '2'
+
+services:
+  application:
+    build: containers/core
+    container_name: phalcon.compose.asterisk.volume
+    volumes:
+      - .:/var/www/phalcon
+      - ./cache:/var/cache/phalcon
+      - ./logs:/var/log/phalcon
+    tty: true
+
+  postgres:
+      restart: always
+      build: containers/postgres
+      container_name: phalcon.compose.asterisk.postgres
+      working_dir: /var/www/phalcon
+      ports:
+        - "5437:5432"
+      volumes:
+        - .:/var/www/phalcon
+        - postgres:/var/lib/postgresql/data
+        - ./conf/postgres/log:/var/log/postgresql
+      environment:
+        POSTGRES_PASSWORD: ''
+        PGDATA: /var/lib/postgresql/data/pgdata
+
+  php:
+    build: containers/php
+    restart: always
+    container_name: phalcon.compose.asterisk.php
+    ports:
+      - "9000"
+      - "9001"
+    volumes:
+      - ./conf/php-fpm/monit:/etc/monit/conf.d
+    volumes_from:
+      - application
+   # depends_on:
+   #   - rabbit
+   #   - redis
+   #   - memcached
+   #
+    tty: true
+
+  redis:
+    restart: always
+    image: redis:latest
+    container_name: phalcon.compose.asterisk.redis
+    ports:
+      - "6379"
+    volumes:
+      - redis:/data
+
+  nginx:
+    restart: always
+    build: containers/nginx
+    #image: phalconphp/nginx:1.10
+    container_name: phalcon.compose.asterisk.nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - php
+    volumes:
+      - ./conf/nginx/certs:/etc/nginx/certs
+      - ./conf/nginx/conf.d:/etc/nginx/conf.d
+      - ./conf/nginx/vhostDev:/etc/nginx/sites-enabled
+      - ./conf/nginx/htauth:/etc/nginx/htauth
+      - ./conf/nginx/log:/var/log/nginx
+    volumes_from:
+      - application
+    environment:
+      # production | development | staging | testing
+      APPLICATION_ENV: development
+    tty: true
+
+  asterisk:
+    build: containers/asterisk
+    restart: always
+    container_name: phalcon.compose.asterisk.asterisk
+    volumes:
+       - ./asterisk/dynamic:/var/spool/asterisk
+       - ./asterisk/config:/etc/asterisk
+    volumes_from:
+        - application
+    tty: true
+
+volumes:
+  postgres:
+    driver: local
+  redis:
+    driver: local
